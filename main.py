@@ -9,13 +9,14 @@ app = Flask(__name__)
 @app.route('/stream', methods=['POST'])
 def stream():
     def generate():
-        random_bit = random.randint(0, 1)
+        # 讓api隨機有is_intent為true及false的兩種情境
+        random_bit = random.randint(0, 1) 
         is_intent = random_bit == 0
-        # print(random_bit)
-
-        for i in range(10):
-            if is_intent:
-                intent_test = """{
+        
+        
+        if is_intent:
+            # 如果is_intent為true，回傳intent內容
+            intent_payload_content = """{
         "polygon": "(138.5607, 15.7915), (99.8672, 89.0884), (72.0231, 16.6307), (138.5607, 76.9646)",
         "RAT": "NR",
         "DL ARFCN": "470503",
@@ -27,15 +28,18 @@ def stream():
         "MbpsaveDLRANUEThptTarget": null,
         "highDlPrbLoadRatioTarget.HighDlPrbLoad": null
     }"""
-                intent_content = json.loads(intent_test)
-                payload = {"is_intent": is_intent,
-                           "details": intent_content}
-                yield f"{json.dumps(payload)}"
-            else:
+            intent_payload = json.loads(intent_payload_content)
+            payload = {"is_intent": is_intent,
+                           "details": intent_payload}
+            yield f"{json.dumps(payload)}"
+
+        else:
+            # 如果is_intent為false，下方回傳一般對話
+            for i in range(10):
                 ch = " A B C " * (i*5)
                 payload = {"is_intent": is_intent, "details": ch}
                 yield f"{json.dumps(payload)}"
-            time.sleep(0.3)
+                time.sleep(0.3)
 
     return Response(generate(), mimetype='application/json')
 
