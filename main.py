@@ -135,11 +135,9 @@ def is_intent():
                 "is_intent": "Conversation",
                 "details": conversation_text.strip()
             }
-            print("normal conversation")
         else:      
             # Determine the type of intent based on extracted keywords
             intent_type = determine_intent_type(extracted_keywords)
-            print("intent")
 
             if intent_type == "Coverage Intent":
                 output_data = {
@@ -187,8 +185,6 @@ def is_intent():
                         "High UL PRB Load Threshold": extracted_keywords.get("High UL PRB Load Threshold", "")
                     }
                 }
-        
-            print("intent finish")
 
         # 将 output_data 分段发送
         output_json = json.dumps(output_data)
