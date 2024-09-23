@@ -188,9 +188,9 @@ def is_intent():
 
         # 將 output_data 分段發送
         output_json = json.dumps(output_data)
-        for i in range(0, len(output_json), 50):  # 每次傳送 50 字符
-            yield output_json[i:i+50]
-            time.sleep(0.1)
+        for i in range(0, len(output_json), 25):  # 每次傳送 50 字符
+            yield output_json[i:i+25]
+            time.sleep(0.3)
 
     return Response(generate_response(), mimetype='application/json')
 
