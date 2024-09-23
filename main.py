@@ -186,11 +186,11 @@ def is_intent():
                     }
                 }
 
-        # 将 output_data 分段发送
+        # 將 output_data 分段發送
         output_json = json.dumps(output_data)
-        for i in range(0, len(output_json), 50):  # 每次传送 50 字符
+        for i in range(0, len(output_json), 50):  # 每次傳送 50 字符
             yield output_json[i:i+50]
-            time.sleep(0.1)  # 模拟延迟
+            time.sleep(0.1)
 
     return Response(generate_response(), mimetype='application/json')
 
