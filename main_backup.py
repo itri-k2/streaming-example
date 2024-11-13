@@ -114,7 +114,7 @@ def determine_intent_type(keywords):
         return "Unknown Intent"
 
 
-@app.route("/is_intent", methods=["POST"])
+@app.route("/is_intent/", methods=["POST"])
 def is_intent():
     input_data = request.json
     input_text = input_data.get('input_text', '')
@@ -132,17 +132,16 @@ def is_intent():
             conversation_text = conversation_response[0]['generated_text'][-1]['content']
 
             output_data = {
-                "is_intent": False,
+                "is_intent": "Conversation",
                 "details": conversation_text.strip()
             }
-            yield f"{json.dumps(output_data)}"
         else:      
             # Determine the type of intent based on extracted keywords
             intent_type = determine_intent_type(extracted_keywords)
 
             if intent_type == "Coverage Intent":
                 output_data = {
-                    "is_intent": True,
+                    "is_intent": "Coverage",
                     "details": {
                         "objectInstance": extracted_keywords.get("objectInstance", ""),
                         "polygon": extracted_keywords.get("polygon", ""),
@@ -156,7 +155,7 @@ def is_intent():
                 }
             elif intent_type == "UE Throughput Intent":
                 output_data = {
-                    "is_intent": True,
+                    "is_intent": "UEthroughput",
                     "details": {
                         "objectInstance": extracted_keywords.get("objectInstance", ""),
                         "polygon": extracted_keywords.get("polygon", ""),
@@ -172,7 +171,7 @@ def is_intent():
                 }
             elif intent_type == "RAN Capacity Intent":
                 output_data = {
-                    "is_intent": True,
+                    "is_intent": "RANCapacity",
                     "details": {
                         "objectInstance": extracted_keywords.get("objectInstance", ""),
                         "polygon": extracted_keywords.get("polygon", ""),
@@ -188,10 +187,10 @@ def is_intent():
                 }
 
         # 將 output_data 分段發送
-            yield f"{json.dumps(output_data)}"
-        # for i in range(0, len(output_json), 25):  # 每次傳送 50 字符
-        #     yield output_json[i:i+25]
-        #     time.sleep(0.3)
+        output_json = json.dumps(output_data)
+        for i in range(0, len(output_json), 25):  # 每次傳送 50 字符
+            yield output_json[i:i+25]
+            time.sleep(0.3)
 
     return Response(generate_response(), mimetype='application/json')
 
@@ -240,15 +239,6 @@ def convert_to_3gpp_format():
     filled_intent = fill_intent_template(intent_type, input_data)
     return jsonify({"response": filled_intent})
 
-@app.route("/test/", methods=["GET"])
-def test():
-
-    return jsonify({"test": "hello"})
-
-@app.route("/test2/", methods=["POST"])
-def test2():
-
-    return jsonify({"test": "hello"})
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
 
